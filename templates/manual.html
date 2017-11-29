@@ -4,22 +4,56 @@
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='spectrum.css') }}">
     <script type="text/javascript" src="{{url_for('static', filename='jquery-1.9.1.js') }}"></script>
     <script type="text/javascript" src="{{url_for('static', filename='spectrum.js') }}"></script>
-    <meta name="viewport" content="width=500">
+    <meta name="viewport" content="width=600">
     <style>
 
 	
     h1 {
-        -webkit-text-stroke-width: 1px;
-   	-webkit-text-stroke-color: black;
-        font-size: 1.7em;
+        //-webkit-text-stroke-width: 1px;
+   	//-webkit-text-stroke-color: black;
+        font-size: 1em;
         font-family: Tahoma;
-	-webkit-margin-after: 0em;
+	//-webkit-margin-after: 0em;
     } 
+
+    .colorpickers {
+ 	float : left;
+    }
+
+    #bookshelf {
+	float:left;
+        background: black;
+	width: 70px;
+	height: 310px;
+	overflow: auto;
+	margin-top: 40px;
+	margin-left: 40px;
+    }
+
+    #shelf1, #shelf2, #shelf3, #shelf4
+    {
+	width: 50px;
+        height: 50px;
+	margin: 10px 10px 0px 10px;
+	background: white;
+    }
+
+    #cupboard
+    {
+	width: 50px;
+        height: 50px;
+	margin: 10px 10px 0px 10px;
+	background: black;
+    }
+
 </style>
 </head>
 <body>
 
+<div id="header"><a href="/">Go back</a></div>
+
 <div class="container">
+<div class="colorpickers">
 <h1 id="change1">Channel 1.</h1>
 <input type='text' id="full1"/>
 
@@ -31,7 +65,15 @@
 
 <h1 id="change4">Channel 4.</h1>
 <input type='text' id="full4"/>
+</div>
 
+<div id="bookshelf">
+<div id="shelf1"></div>
+<div id="shelf2"></div>
+<div id="cupboard"></div>
+<div id="shelf3"></div>
+<div id="shelf4"></div>
+</div>
 </div>
 
 <script type="text/javascript">
@@ -40,7 +82,7 @@
 
 function handleRequestState(channel, hex)
 {
-  $("#change"+channel.toString()).css("color", "#"+hex);
+  $("#shelf"+channel.toString()).css("background", "#"+hex);
   $("#full"+channel.toString()).spectrum("set", hex);	
 };
 
@@ -58,10 +100,8 @@ requestState(4);
 
 function changeColor (color, channel) {
         var hex = color.toHexString();
-	//var hsv = color.toHsv();
-	//var hue = Math.trunc(hsv["h"]);
 
-	$("#change"+channel.toString()).css("color", hex);
+	$("#shelf"+channel.toString()).css("background", hex);
 	$.get('/setColor/' + channel.toString() + '/'+hex.replace('#',''), function( data ) {
   $("#change"+channel.toString()).html(data);
 });
