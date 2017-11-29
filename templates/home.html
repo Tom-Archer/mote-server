@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='spectrum.css') }}">
+    <script type="text/javascript" src="{{url_for('static', filename='jquery-1.9.1.js') }}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='spectrum.js') }}"></script>
+    <meta name="viewport" content="width=500">
+    <style>
+
+html, body, {
+    height: 100%;
+}
+
+.header {
+    position:	absolute;
+    top:	0px;
+    height:     50px;
+    width:      100%;
+}
+
+.status {
+    position:	absolute;
+    top:	50px;
+    height:     50px;
+    width:      100%;
+}
+
+.cssBody {
+    position:	absolute;
+    top:	100px;
+    bottom:	0px;
+    width: 	100%;
+}
+
+</style>
+</head>
+<body>
+
+    <div class="header"><h1>Welcome to MoteServer</h1></div>
+    <div class="status"><p>{{ status }}</p></div>
+    <div class="cssBody">
+	<h2>Modes</h2>
+	<a href="/manual">Manual</a><br/>
+  	<a href="/rainbow">Rainbow</a><br/>
+	<a href="/cheer">Cheerlights</a><br/>
+	<a href="/disco">Disco</a><br/>
+    </div>
+
+</body>
+</html>
