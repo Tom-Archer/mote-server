@@ -5,6 +5,7 @@ from mote import Mote
 from rainbow_thread import RainbowThread
 from cheer_thread import CheerThread
 from disco_thread import DiscoThread
+from fairy_thread import FairyThread
 
 app = Flask(__name__)
 mote = Mote()
@@ -52,6 +53,12 @@ def hex_to_rgb(value):
 
 def mote_off():
     global mote_on
+    global animation_thread
+    
+    if animation_thread != None:
+        animation_thread.join()
+        animation_thread = None
+    
     mote.clear()
     mote.show()
     mote_on = False
@@ -59,6 +66,33 @@ def mote_off():
 
 def get_channel_color(channel):
     return channel_colors[channel]
+
+def init_mote(show=True):
+    set_mode("Manual")
+    for channel in range(1,5):
+        r, g, b = hex_to_rgb(channel_colors[channel])
+        for pixel in range(16):
+            mote.set_pixel(int(channel), pixel, r, g, b)
+    if show:
+        mote.show()
+
+def run_animation(thread):
+    global animation_thread
+    exception = False
+
+    try:
+        if animation_thread != None:
+            animation_thread.join()
+            animation_thread = None
+        
+        if mote_on:
+            animation_thread = thread
+            animation_thread.start()
+            set_mode(animation_thread.name)
+    except:
+        animation_thread = None
+        exception = True
+    return home(exception)
 
 @app.route("/")
 def root():
@@ -97,58 +131,19 @@ def setColor(channel, color):
 
 @app.route("/rainbow")
 def rainbow():
-    set_mode("Rainbow")
-    stop_animation()
-    global animation_thread
-    try:
-        animation_thread = RainbowThread(mote)
-        animation_thread.start()
-        return home()
-    except:
-        animation_thread = None
-        return home(True)
+    return run_animation(RainbowThread(mote))
 
 @app.route("/cheer")
 def cheer():
-    set_mode("Cheerlights")
-    stop_animation()
-    global animation_thread
-    try:
-        animation_thread = CheerThread(mote)
-        animation_thread.start()
-        return home()
-    except:
-        animation_thread = None
-        return home(True)
+    return run_animation(CheerThread(mote))
 
 @app.route("/disco")
 def disco():
-    set_mode("Disco")
-    stop_animation()
-    global animation_thread
-    try:
-        animation_thread = DiscoThread(mote)
-        animation_thread.start()
-        return home()
-    except:
-        animation_thread = None
-        return home(True)
-    
-def stop_animation():
-    global animation_thread
-    if animation_thread != None:
-        animation_thread.join()
-        animation_thread = None
-        return True
-    return False
+    return run_animation(DiscoThread(mote))
 
-def init_mote(show=True):
-    for channel in range(1,5):
-        r, g, b = hex_to_rgb(channel_colors[channel])
-        for pixel in range(16):
-            mote.set_pixel(int(channel), pixel, r, g, b)
-    if show:
-        mote.show()
+@app.route("/fairy")
+def fairy():
+    return run_animation(FairyThread(mote))
 
 @app.route("/on")
 def on():
@@ -160,7 +155,6 @@ def on():
 
 @app.route("/off")
 def off():
-    stop_animation()
     mote_off()
 
     return home()
@@ -169,5 +163,6 @@ if __name__ == "__main__":
     init_mote()
     app.run(host='0.0.0.0', port=80, debug=True)
     # When app terminated:
-    stop_animation()
+    mote_off()
+        
    

@@ -5,7 +5,7 @@ from colorsys import hsv_to_rgb
 class CheerThread(MoteThread):
     def __init__(self, mote):
         self.mote = mote
-        MoteThread.__init__(self, name="CheerThread")
+        MoteThread.__init__(self, name="CheerLights")
 
     def run(self):
         while not self.stopped():

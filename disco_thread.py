@@ -6,7 +6,7 @@ from colorsys import hsv_to_rgb
 class DiscoThread(MoteThread):
     def __init__(self, mote):
         self.mote = mote
-        MoteThread.__init__(self, name="DiscoThread")
+        MoteThread.__init__(self, name="Disco")
 
     def run(self):
         while not self.stopped():
