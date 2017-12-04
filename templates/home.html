@@ -36,15 +36,31 @@ html, body, {
 </head>
 <body>
 
+<script type="text/javascript">
+
+function requestAnimation(name)
+{
+ $.getJSON("/"+name, function( data ) {
+  $("#status").html(data.message);
+ });
+};
+
+</script>
+
     <div class="header"><h1>Welcome to MoteServer</h1></div>
-    <div class="status"><p>{{ status }}</p></div>
+    <div class="status"><p id="status">{{ status }}</p></div>
     <div class="cssBody">
 	<h2>Modes</h2>
+        
 	<a href="/manual">Manual</a><br/>
-  	<a href="/rainbow">Rainbow</a><br/>
+  	<a href="javascript:void(0);" onclick="requestAnimation('rainbow');">Rainbow</a><br/>
+	<a href="javascript:void(0);" onclick="requestAnimation('cheer');">Cheerlights</a><br/>
+	<a href="javascript:void(0);" onclick="requestAnimation('disco');">Disco</a><br/>
+	<a href="javascript:void(0);" onclick="requestAnimation('fairy');">Fairy</a><br/>
+<!--<a href="/rainbow">Rainbow</a><br/>
 	<a href="/cheer">Cheerlights</a><br/>
 	<a href="/disco">Disco</a><br/>
-	<a href="/fairy">Fairy</a><br/>
+	<a href="/fairy">Fairy</a><br/>-->
     </div>
 
 </body>

@@ -7,13 +7,9 @@
     <meta name="viewport" content="width=600">
     <style>
 
-	
     h1 {
-        //-webkit-text-stroke-width: 1px;
-   	//-webkit-text-stroke-color: black;
         font-size: 1em;
         font-family: Tahoma;
-	//-webkit-margin-after: 0em;
     } 
 
     .colorpickers {
@@ -80,17 +76,15 @@
 
 // Request current states
 
-function handleRequestState(channel, hex)
-{
-  $("#shelf"+channel.toString()).css("background", "#"+hex);
-  $("#full"+channel.toString()).spectrum("set", hex);	
-};
+var current_states = ["","","",""];
 
 function requestState(channel)
 {
-$.get('/getColor/' + channel.toString(), function( data ) {
-  handleRequestState(channel, data);
-});
+ $.getJSON("/getColor/" + channel.toString(), function( data ) {
+  $("#shelf"+channel.toString()).css("background", "#"+data.color);
+  $("#full"+channel.toString()).spectrum("set", "#"+data.color);
+  current_states[channel-1] = "#"+data.color;
+ });
 };
 
 requestState(1);
@@ -100,11 +94,15 @@ requestState(4);
 
 function changeColor (color, channel) {
         var hex = color.toHexString();
-
-	$("#shelf"+channel.toString()).css("background", hex);
-	$.get('/setColor/' + channel.toString() + '/'+hex.replace('#',''), function( data ) {
-  $("#change"+channel.toString()).html(data);
+	
+	if (current_states[channel-1] != hex)
+	{
+	  current_states[channel-1] = hex;
+	  $("#shelf"+channel.toString()).css("background", hex);
+	  $.getJSON("/setColor/" + channel.toString() + '/'+hex.replace('#',''), function( data ) {
+  $("#change"+channel.toString()).html(data.message);
 });
+	}
 };
 
 var palette_array = [
@@ -133,20 +131,7 @@ $("#full1").spectrum({
     showSelectionPalette: true,
     maxPaletteSize: 10,
     preferredFormat: "hex",
-    localStorageKey: "spectrum.demo",
-    clickoutFiresChange: false,
-    move: function (color) {
-        
-    },
-    show: function () {
-    
-    },
-    beforeShow: function () {
-    
-    },
-    hide: function () {
-    
-    },
+    clickoutFiresChange: true,
     change: function (color) {
     	changeColor(color,1);
     },
@@ -162,20 +147,7 @@ $("#full2").spectrum({
     showSelectionPalette: true,
     maxPaletteSize: 10,
     preferredFormat: "hex",
-    localStorageKey: "spectrum.demo",
-    clickoutFiresChange: false,
-    move: function (color) {
-        
-    },
-    show: function () {
-    
-    },
-    beforeShow: function () {
-    
-    },
-    hide: function () {
-    
-    },
+    clickoutFiresChange: true,
     change: function (color) {
     	changeColor(color,2);
     },
@@ -191,20 +163,7 @@ $("#full3").spectrum({
     showSelectionPalette: true,
     maxPaletteSize: 10,
     preferredFormat: "hex",
-    localStorageKey: "spectrum.demo",
-    clickoutFiresChange: false,
-    move: function (color) {
-        
-    },
-    show: function () {
-    
-    },
-    beforeShow: function () {
-    
-    },
-    hide: function () {
-    
-    },
+    clickoutFiresChange: true,
     change: function (color) {
     	changeColor(color,3);
     },
@@ -220,20 +179,7 @@ $("#full4").spectrum({
     showSelectionPalette: true,
     maxPaletteSize: 10,
     preferredFormat: "hex",
-    localStorageKey: "spectrum.demo",
-    clickoutFiresChange: false,
-    move: function (color) {
-        
-    },
-    show: function () {
-    
-    },
-    beforeShow: function () {
-    
-    },
-    hide: function () {
-    
-    },
+    clickoutFiresChange: true,
     change: function (color) {
     	changeColor(color,4);
     },
