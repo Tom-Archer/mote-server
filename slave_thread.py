@@ -6,10 +6,10 @@ class SlaveThread(MoteThread):
     """ Expects a byte array of the form p,r,g,b
         Where p is the pixel to be set (0-15)
               r,g,b are the color values (0-255) """
-    def __init__(self, mote, udp_port):
+    def __init__(self, mote, udp_ip, udp_port):
         self.mote = mote
-        self.ip = "192.168.0.14"
-        self.port = 7777
+        self.ip = udp_ip
+        self.port = udp_port
 
         self.sock = socket.socket(socket.AF_INET, # Internet
                             socket.SOCK_DGRAM) # UDP

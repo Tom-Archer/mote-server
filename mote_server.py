@@ -145,7 +145,7 @@ def cheer():
 
 @app.route("/disco")
 def disco():
-    return run_animation(SlaveThread(mote))
+    return run_animation(SlaveThread(mote, "192.168.0.14", 7777))
 
 @app.route("/fairy")
 def fairy():
