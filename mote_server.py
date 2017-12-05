@@ -4,7 +4,7 @@ import datetime
 from mote import Mote
 from rainbow_thread import RainbowThread
 from soft_cheer_thread import CheerThread
-from disco_thread import DiscoThread
+from slave_thread import SlaveThread
 from fairy_thread import FairyThread
 from manual_thread import ManualThread
 
@@ -145,7 +145,7 @@ def cheer():
 
 @app.route("/disco")
 def disco():
-    return run_animation(DiscoThread(mote))
+    return run_animation(SlaveThread(mote))
 
 @app.route("/fairy")
 def fairy():
