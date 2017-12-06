@@ -18,3 +18,5 @@ class MoteThread(threading.Thread):
         """ Stop the thread and wait for it to end. """
         self._stopevent.set()
         threading.Thread.join(self, timeout)
+        self.mote.clear()
+        self.mote.show()

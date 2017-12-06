@@ -49,12 +49,12 @@ class CheerThread(MoteThread):
                     for channel in range(1, 5):
                         for idx in range(0,3):
                             old_channels_colour[channel - 1][idx] += channels_colour_delta[channel - 1][idx]
-                            r,g,b = hsv_to_rgb(old_channels_colour[channel - 1][0],
-                                               old_channels_colour[channel - 1][1],
-                                               old_channels_colour[channel - 1][2]);
-                            for pixel in range(self.mote.get_pixel_count(channel)):
-                                self.mote.set_pixel(channel, pixel, int(r), int(g), int(b))
-                            self.mote.show()
+                        r,g,b = hsv_to_rgb(old_channels_colour[channel - 1][0],
+                                           old_channels_colour[channel - 1][1],
+                                           old_channels_colour[channel - 1][2]);
+                        for pixel in range(self.mote.get_pixel_count(channel)):
+                            self.mote.set_pixel(channel, pixel, int(r), int(g), int(b))
+                        self.mote.show()
                     self.wait(transition_time / transition_step)
 
             for channel in range(0, 4):

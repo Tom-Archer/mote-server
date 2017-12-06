@@ -6,7 +6,8 @@ from rainbow_thread import RainbowThread
 from soft_cheer_thread import CheerThread
 from slave_thread import SlaveThread
 from fairy_thread import FairyThread
-from manual_thread import ManualThread
+from manual_thread import ManualThread, TransitionClass
+from queue import Queue
 
 app = Flask(__name__)
 mote = Mote()
@@ -26,6 +27,8 @@ channel_colors[4] = "FFFFFF"
 
 animation_thread = None
 
+manual_queue = Queue()
+
 def set_mode(mode):
     global current_mode
     current_mode = mode
@@ -37,13 +40,6 @@ def get_mode(error=False):
         else:
             return "MoteServer is current on but hit a snag running '"+current_mode+"' :("
     return "MoteServer is currently off :("
-  
-def set_pixel_hex(channel, pixel, hex_string):
-    r, g, b = hex_to_rgb(hex_string)
-    mote.set_pixel(channel, pixel, r, g, b)
-
-def hex_to_rgb(value):
-    return bytearray.fromhex(value)
 
 def mote_off():
     global mote_on
@@ -57,17 +53,13 @@ def mote_off():
     mote.show()
     mote_on = False
 
-def get_channel_color(channel):
-    return channel_colors[channel]
-
-def init_mote(show=True):
+def init_mote():
     set_mode("Manual")
-    for channel in range(1,5):
-        r, g, b = hex_to_rgb(channel_colors[channel])
-        for pixel in range(16):
-            mote.set_pixel(int(channel), pixel, r, g, b)
-    if show:
-        mote.show()
+    
+    if mote_on:
+        run_animation(ManualThread(mote, manual_queue))
+        for channel in range(1,5):
+            manual_queue.put(TransitionClass(channel, channel_colors[channel]))
 
 def stop_animation():
     global animation_thread
@@ -92,7 +84,7 @@ def run_animation(thread):
         animation_thread = None
         exception = True
 
-    return jsonify(message = get_mode(exception))
+    return exception
 
 @app.route("/")
 def root():
@@ -104,6 +96,11 @@ def root():
 
 @app.route("/manual")
 def manual():
+    print(current_mode)
+    
+    if current_mode != "Manual":
+        init_mote()
+    
     return render_template('manual.html')
     
 @app.route("/getColor/<int:channel>/")
@@ -112,44 +109,32 @@ def getColor(channel):
 
 @app.route("/setColor/<int:channel>/<string:color>")
 def setColor(channel, color):
-    set_mode("Manual")
-    
-    if stop_animation():
-        # set all channels
-        init_mote(False)
-
     response = "Channel " + str(channel) + ". "
     try:
-        t = ManualThread(mote, channel, channel_colors[channel], color)
         channel_colors[channel] = str(color)
-        
-        #for pixel in range(16):
-        #    set_pixel_hex(channel, pixel, color)
-            
-        if (mote_on):
-            t.start()
-            #mote.show()
-            
+        if mote_on:
+            # Add color to queue
+            manual_queue.put(TransitionClass(channel, color))
     except:
         response = response + "There was an error setting the color."
-
+        
     return jsonify(message = response)
 
 @app.route("/rainbow")
 def rainbow():
-    return run_animation(RainbowThread(mote))
+    return jsonify(message = get_mode(run_animation(RainbowThread(mote))))
 
 @app.route("/cheer")
 def cheer():
-    return run_animation(CheerThread(mote))
+    return jsonify(message = get_mode(run_animation(CheerThread(mote))))
 
 @app.route("/disco")
 def disco():
-    return run_animation(SlaveThread(mote, "192.168.0.14", 7777))
+    return jsonify(message = get_mode(run_animation(SlaveThread(mote, "192.168.0.14", 7777))))
 
 @app.route("/fairy")
 def fairy():
-    return run_animation(FairyThread(mote))
+    return jsonify(message = get_mode(run_animation(FairyThread(mote))))
 
 @app.route("/on")
 def on():
@@ -171,7 +156,7 @@ def not_found(error):
 
 if __name__ == "__main__":
     init_mote()
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=False)
     # When app terminated:
     mote_off()
         
