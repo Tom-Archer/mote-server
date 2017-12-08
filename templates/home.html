@@ -2,41 +2,31 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='spectrum.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='site.css') }}">
     <script type="text/javascript" src="{{url_for('static', filename='jquery-1.9.1.js') }}"></script>
     <script type="text/javascript" src="{{url_for('static', filename='spectrum.js') }}"></script>
     <meta name="viewport" content="width=500">
     <style>
-
-html, body, {
-    height: 100%;
-}
-
-.header {
-    position:	absolute;
-    top:	0px;
-    height:     50px;
-    width:      100%;
-}
-
-.status {
-    position:	absolute;
-    top:	50px;
-    height:     50px;
-    width:      100%;
-}
-
-.cssBody {
-    position:	absolute;
-    top:	100px;
-    bottom:	0px;
-    width: 	100%;
-}
 
 </style>
 </head>
 <body>
 
 <script type="text/javascript">
+
+function toggle(checkbox)
+{
+  // Switch on/off and update status
+  var state = "/off";
+  if (checkbox.checked)
+  {
+    state = "/on";
+  }
+
+  $.getJSON(state, function( data ) {
+    $("#status").html(data.message);
+  });
+};
 
 function requestAnimation(name)
 {
@@ -47,7 +37,13 @@ function requestAnimation(name)
 
 </script>
 
-    <div class="header"><h1>Welcome to MoteServer</h1></div>
+    <div class="header"><h1 class="header_text">Welcome to MoteServer</h1>   
+	<label class="switch">
+  	  <input type="checkbox" onclick="toggle(this);" {{ on }}>
+  	  <span class="slider round"></span>
+	</label>
+    </div>
+
     <div class="status"><p id="status">{{ status }}</p></div>
     <div class="cssBody">
 	<h2>Modes</h2>
@@ -57,10 +53,7 @@ function requestAnimation(name)
 	<a href="javascript:void(0);" onclick="requestAnimation('cheer');">Cheerlights</a><br/>
 	<a href="javascript:void(0);" onclick="requestAnimation('disco');">Disco</a><br/>
 	<a href="javascript:void(0);" onclick="requestAnimation('fairy');">Fairy</a><br/>
-<!--<a href="/rainbow">Rainbow</a><br/>
-	<a href="/cheer">Cheerlights</a><br/>
-	<a href="/disco">Disco</a><br/>
-	<a href="/fairy">Fairy</a><br/>-->
+
     </div>
 
 </body>

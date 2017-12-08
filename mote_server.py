@@ -10,6 +10,7 @@ from manual_thread import ManualThread, TransitionClass
 from queue import Queue
 
 app = Flask(__name__)
+
 mote = Mote()
 mote.configure_channel(1, 16, False)
 mote.configure_channel(2, 16, False)
@@ -19,11 +20,11 @@ mote.configure_channel(4, 16, False)
 mote_on = True
 current_mode = "Manual"
 
-channel_colors = {}
-channel_colors[1] = "FF0000"
-channel_colors[2] = "00FF00"
-channel_colors[3] = "0000FF"
-channel_colors[4] = "FFFFFF"
+channel_colors = {
+    1 : "FF0000",
+    2 : "00FF00",
+    3 : "0000FF",
+    4 : "FFFFFF" }
 
 animation_thread = None
 
@@ -33,7 +34,7 @@ def set_mode(mode):
     global current_mode
     current_mode = mode
 
-def get_mode(error=False):
+def get_status(error=False):
     if (mote_on):
         if not error:
             return "MoteServer is currently on and in '"+current_mode+"' mode!"
@@ -89,7 +90,8 @@ def run_animation(thread):
 @app.route("/")
 def root():
     templateData = {
-      'status' : get_mode()
+      'on'     : 'checked' if mote_on else '',
+      'status' : get_status()
       }
 
     return render_template('home.html', **templateData)
@@ -122,19 +124,19 @@ def setColor(channel, color):
 
 @app.route("/rainbow")
 def rainbow():
-    return jsonify(message = get_mode(run_animation(RainbowThread(mote))))
+    return jsonify(message = get_status(run_animation(RainbowThread(mote))))
 
 @app.route("/cheer")
 def cheer():
-    return jsonify(message = get_mode(run_animation(CheerThread(mote))))
+    return jsonify(message = get_status(run_animation(CheerThread(mote))))
 
 @app.route("/disco")
 def disco():
-    return jsonify(message = get_mode(run_animation(SlaveThread(mote, "192.168.0.14", 7777))))
+    return jsonify(message = get_status(run_animation(SlaveThread(mote, "192.168.0.14", 7777))))
 
 @app.route("/fairy")
 def fairy():
-    return jsonify(message = get_mode(run_animation(FairyThread(mote))))
+    return jsonify(message = get_status(run_animation(FairyThread(mote))))
 
 @app.route("/on")
 def on():
@@ -142,13 +144,13 @@ def on():
     mote_on = True
     init_mote()
 
-    return redirect(url_for("root"))
+    return jsonify(message = get_status())
 
 @app.route("/off")
 def off():
     mote_off()
 
-    return redirect(url_for("root"))
+    return jsonify(message = get_status())
 
 @app.errorhandler(404)
 def not_found(error):
