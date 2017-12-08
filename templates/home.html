@@ -16,11 +16,12 @@
 
 function toggle(checkbox)
 {
-  // Switch on/off and update status
+  // Switch on/off and update the status message
   var state = "/off";
   if (checkbox.checked)
   {
     state = "/on";
+    $("#Manual").prop("checked", true);
   }
 
   $.getJSON(state, function( data ) {
@@ -28,12 +29,18 @@ function toggle(checkbox)
   });
 };
 
-function requestAnimation(name)
+function setMode(name)
 {
- $.getJSON("/"+name, function( data ) {
-  $("#status").html(data.message);
- });
+  // Set the mode and update the status message
+  $.getJSON("/"+name, function( data ) {
+    $("#status").html(data.message);
+  });
 };
+
+$( document ).ready(function() {
+  // Check the appropriate radiobutton
+  $("#{{ mode }}").prop("checked", true);
+});
 
 </script>
 
@@ -48,11 +55,26 @@ function requestAnimation(name)
     <div class="cssBody">
 	<h2>Modes</h2>
         
-	<a href="/manual">Manual</a><br/>
-  	<a href="javascript:void(0);" onclick="requestAnimation('rainbow');">Rainbow</a><br/>
-	<a href="javascript:void(0);" onclick="requestAnimation('cheer');">Cheerlights</a><br/>
-	<a href="javascript:void(0);" onclick="requestAnimation('disco');">Disco</a><br/>
-	<a href="javascript:void(0);" onclick="requestAnimation('fairy');">Fairy</a><br/>
+	<label class="container">Manual | <a href="/configure_manual">Configure</a><br/>
+	  <input id="Manual" type="radio" name="radio" onclick="setMode('manual');">
+	  <span class="checkmark"></span>
+	</label>
+	<label class="container">Rainbow
+	  <input id="Rainbow" type="radio" name="radio" onclick="setMode('rainbow');">
+	  <span class="checkmark"></span>
+	</label>
+	<label class="container">Cheerlights
+	  <input id="Cheerlights" type="radio" name="radio" onclick="setMode('cheer');">
+	  <span class="checkmark"></span>
+	</label>
+	<label class="container">Disco
+	  <input id="Disco" type="radio" name="radio" onclick="setMode('disco');">
+	  <span class="checkmark"></span>
+	</label>
+	<label class="container">Fairy Lights
+	  <input id="Fairy Lights" type="radio" name="radio" onclick="setMode('fairy');">
+	  <span class="checkmark"></span>
+	</label>
 
     </div>
 

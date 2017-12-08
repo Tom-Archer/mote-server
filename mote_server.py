@@ -91,6 +91,7 @@ def run_animation(thread):
 def root():
     templateData = {
       'on'     : 'checked' if mote_on else '',
+      'mode'   : current_mode,
       'status' : get_status()
       }
 
@@ -98,8 +99,13 @@ def root():
 
 @app.route("/manual")
 def manual():
-    print(current_mode)
-    
+    if current_mode != "Manual":
+        init_mote()
+
+    return jsonify(message = get_status())
+        
+@app.route("/configure_manual")
+def configure_manual():
     if current_mode != "Manual":
         init_mote()
     
