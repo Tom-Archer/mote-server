@@ -21,7 +21,7 @@ class ManualThread(MoteThread):
         self.mote = mote
         self.queue = queue
         
-        MoteThread.__init__(self, name="Manual")
+        MoteThread.__init__(self, name="manual")
 
     def run(self):
 

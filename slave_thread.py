@@ -15,7 +15,7 @@ class SlaveThread(MoteThread):
                             socket.SOCK_DGRAM) # UDP
         self.sock.bind((self.ip, self.port))
         self.sock.setblocking(0)
-        MoteThread.__init__(self, name="Disco")
+        MoteThread.__init__(self, name="disco")
 
     def run(self):
         while not self.stopped():

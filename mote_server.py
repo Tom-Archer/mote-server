@@ -18,7 +18,15 @@ mote.configure_channel(3, 16, False)
 mote.configure_channel(4, 16, False)
 
 mote_on = True
-current_mode = "Manual"
+current_mode = "manual"
+
+mode_nice_names = {
+    "manual"  : "Manual",
+    "rainbow" : "Rainbow",
+    "cheer"   : "CheerLights",
+    "disco"   : "Disco",
+    "fairy"   : "Fairy Lights",
+    }
 
 channel_colors = {
     1 : "FF0000",
@@ -37,9 +45,9 @@ def set_mode(mode):
 def get_status(error=False):
     if (mote_on):
         if not error:
-            return "MoteServer is currently on and in '"+current_mode+"' mode!"
+            return "MoteServer is currently on and in '"+mode_nice_names[current_mode]+"' mode!"
         else:
-            return "MoteServer is current on but hit a snag running '"+current_mode+"' :("
+            return "MoteServer is current on but hit a snag running '"+mode_nice_names[current_mode]+"' :("
     return "MoteServer is currently off :("
 
 def mote_off():
@@ -54,11 +62,9 @@ def mote_off():
     mote.show()
     mote_on = False
 
-def init_mote():
-    set_mode("Manual")
-    
+def init_mote():    
     if mote_on:
-        run_animation(ManualThread(mote, manual_queue))
+        run_animation(ManualThread(mote, manual_queue), True)
         for channel in range(1,5):
             manual_queue.put(TransitionClass(channel, channel_colors[channel]))
 
@@ -70,17 +76,19 @@ def stop_animation():
         return True
     return False
 
-def run_animation(thread):
+def run_animation(thread, force=False):
     global animation_thread
     exception = False
 
     try:
-        stop_animation()
+        # Don't re-init the same mode
+        if force or current_mode != thread.name:
+            stop_animation()
         
-        if mote_on:
-            animation_thread = thread
-            animation_thread.start()
-            set_mode(animation_thread.name)
+            if mote_on:
+                animation_thread = thread
+                animation_thread.start()
+                set_mode(animation_thread.name)
     except:
         animation_thread = None
         exception = True
@@ -99,14 +107,14 @@ def root():
 
 @app.route("/manual")
 def manual():
-    if current_mode != "Manual":
+    if current_mode != "manual":
         init_mote()
 
     return jsonify(message = get_status())
         
 @app.route("/configure_manual")
 def configure_manual():
-    if current_mode != "Manual":
+    if current_mode != "manual":
         init_mote()
     
     return render_template('manual.html')
@@ -138,8 +146,12 @@ def cheer():
 
 @app.route("/disco")
 def disco():
-    return jsonify(message = get_status(run_animation(SlaveThread(mote, "192.168.0.14", 7777))))
-
+    # prevent a second instance as it raises socket error
+    if current_mode != "disco":
+        return jsonify(message = get_status(run_animation(SlaveThread(mote, "192.168.0.14", 7777))))
+    else:
+        return jsonify(message = get_status())
+    
 @app.route("/fairy")
 def fairy():
     return jsonify(message = get_status(run_animation(FairyThread(mote))))

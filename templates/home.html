@@ -21,7 +21,7 @@ function toggle(checkbox)
   if (checkbox.checked)
   {
     state = "/on";
-    $("#Manual").prop("checked", true);
+    $("#manual").prop("checked", true);
   }
 
   $.getJSON(state, function( data ) {
@@ -56,23 +56,23 @@ $( document ).ready(function() {
 	<h2>Modes</h2>
         
 	<label class="container">Manual | <a href="/configure_manual">Configure</a><br/>
-	  <input id="Manual" type="radio" name="radio" onclick="setMode('manual');">
+	  <input id="manual" type="radio" name="radio" onclick="setMode('manual');">
 	  <span class="checkmark"></span>
 	</label>
 	<label class="container">Rainbow
-	  <input id="Rainbow" type="radio" name="radio" onclick="setMode('rainbow');">
+	  <input id="rainbow" type="radio" name="radio" onclick="setMode('rainbow');">
 	  <span class="checkmark"></span>
 	</label>
-	<label class="container">Cheerlights
-	  <input id="Cheerlights" type="radio" name="radio" onclick="setMode('cheer');">
+	<label class="container">CheerLights
+	  <input id="cheer" type="radio" name="radio" onclick="setMode('cheer');">
 	  <span class="checkmark"></span>
 	</label>
 	<label class="container">Disco
-	  <input id="Disco" type="radio" name="radio" onclick="setMode('disco');">
+	  <input id="disco" type="radio" name="radio" onclick="setMode('disco');">
 	  <span class="checkmark"></span>
 	</label>
 	<label class="container">Fairy Lights
-	  <input id="Fairy Lights" type="radio" name="radio" onclick="setMode('fairy');">
+	  <input id="fairy" type="radio" name="radio" onclick="setMode('fairy');">
 	  <span class="checkmark"></span>
 	</label>
 

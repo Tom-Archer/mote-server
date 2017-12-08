@@ -7,7 +7,7 @@ import random
 class FairyThread(MoteThread):
     def __init__(self, mote):
         self.mote = mote
-        MoteThread.__init__(self, name="Fairy Lights")
+        MoteThread.__init__(self, name="fairy")
         #self.values = append(linspace(0,1,50), linspace(1,0,50))
         self.max_value = 0.40
         self.min_value = 0.02

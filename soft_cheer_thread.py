@@ -8,7 +8,7 @@ transition_step = 100
 class CheerThread(MoteThread):
     def __init__(self, mote):
         self.mote = mote
-        MoteThread.__init__(self, name="CheerLights")
+        MoteThread.__init__(self, name="cheer")
 
     def run(self):
         channels_colour_rgb = [[0,0,0], [0,0,0], [0,0,0], [0,0,0]]
